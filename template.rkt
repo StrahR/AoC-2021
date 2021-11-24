@@ -19,7 +19,11 @@
    (for/list ([l file-contents])
      (string-upcase l))))
 
-(call-with-output-file (format "day-~a-1.out" day) #:exists 'truncate
-  (lambda (out) (display (string-join nal1 "\n") out)))
-(call-with-output-file (format "day-~a-2.out" day) #:exists 'truncate
-  (lambda (out) (display (string-join nal2 "\n") out)))
+(call-with-output-file (format "day-~a-1.out" day)
+  #:exists 'truncate
+  (lambda (out)
+    (display (string-join nal1 "\n") out)))
+(call-with-output-file (format "day-~a-2.out" day)
+  #:exists 'truncate
+  (lambda (out)
+    (display (string-join nal2 "\n") out)))
