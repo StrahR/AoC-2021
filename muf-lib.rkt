@@ -1,4 +1,6 @@
-; #lang racket
+#lang racket
+
+(provide aoc-read aoc-write mapb)
 
 (define (aoc-read day [test #f])
   (let ([filename (format (if test "day-~a-test.in" "day-~a.in") day)])
@@ -11,7 +13,7 @@
   (begin
     (call-with-output-file (format "day-~a-~a.out" day part)
       #:exists 'truncate
-      (lambda (out) (display (~a soln) out)))
+      (λ (out) (display (~a soln) out)))
     (cond [sub (system (format "raco aoc -y 2021 -d ~a -a ~a ~a" day part soln))])))
 
 (define (mapb f . xss)
@@ -20,5 +22,3 @@
         (reverse acc)
         (apply aux (cons (apply f (map car xss)) acc) (map cdr xss))))
   (apply aux '() xss))
-
-(provide aoc-read aoc-write mapb)

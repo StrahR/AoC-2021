@@ -1,6 +1,6 @@
 #lang racket
 
-(include "muf-lib.rkt")
+(require "muf-lib.rkt")
 
 (define day "01")
 
