@@ -9,15 +9,17 @@
    (port->string (open-input-file (format "day-~a.in" day)) #:close? #t)
    "\n"))
 
-(define reverse
-  (lambda (list) (foldl cons null list)))
+(define (reverse list)
+  (foldl cons null list))
 
 (define nal1 file-contents)
 
+; (define nal2
+;   (reverse
+;    (for/list ([l file-contents])
+;      (string-upcase l))))
 (define nal2
-  (reverse
-   (for/list ([l file-contents])
-     (string-upcase l))))
+  (reverse (map string-upcase file-contents)))
 
 (call-with-output-file (format "day-~a-1.out" day)
   #:exists 'truncate
