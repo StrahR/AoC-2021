@@ -22,7 +22,23 @@
       ))
   (aux 0 ll))
 
+(define (nal2 ll)
+  (define (aux acc xs)
+    (match* (xs (cdr xs) (cddr xs) (cdddr xs))
+      [(_ _ _ '()) acc]
+      [((cons x xs) (cons y _) (cons z _) (cons w _))
+       #:when (< (+ x y z) (+ y z w))
+       (aux (add1 acc) xs)]
+      [((cons _ xs) _ _ _) (aux acc xs)]
+      ))
+  (aux 0 ll))
+
 (call-with-output-file (format "day-~a-1.out" day)
   #:exists 'truncate
   (lambda (out)
     (display (~a (nal1 file-contents)) out)))
+
+(call-with-output-file (format "day-~a-2.out" day)
+  #:exists 'truncate
+  (lambda (out)
+    (display (~a (nal2 file-contents)) out)))
