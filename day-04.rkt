@@ -30,11 +30,11 @@
             (* k (score new-bingo))
             new-bingo))))
 
-(define (nal-loop input bingos brcond)
+(define (nal-loop input bingos break?)
   (for/fold ([bingos bingos]
              #:result (car (filter number? bingos)))
             ([k (in-list input)])
-    #:break (brcond bingos)
+    #:break (break? bingos)
     (map (cut mark k <>) (filter-not number? bingos))))
 
 (define (nal1 input bingos) (nal-loop input bingos (cut ormap  number? <>)))
