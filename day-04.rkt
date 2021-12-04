@@ -37,7 +37,7 @@
     #:break (break? bingos)
     (map (cut mark k <>) (filter-not number? bingos))))
 
-(define (nal1 input bingos) (nal-loop input bingos (cut ormap  number? <>)))
+(define (nal1 input bingos) (nal-loop input bingos (cut  ormap number? <>)))
 (define (nal2 input bingos) (nal-loop input bingos (cut andmap number? <>)))
 
 (aoc-write day 1 (nal1 input bingos))
