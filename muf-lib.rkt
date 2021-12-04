@@ -11,7 +11,7 @@
 
 (define (aoc-write day part soln [sub #f])
   (begin
-    (display-to-file (~a soln) (format "day-~a-~a.out" day part))
+    (display-to-file (~a soln) (format "day-~a-~a.out" day part) #:exists 'truncate)
     (cond [sub (system (format "raco aoc -y 2021 -d ~a -a ~a ~a" day part soln))])))
 
 (define (mapb f . xss)
