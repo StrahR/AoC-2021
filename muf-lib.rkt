@@ -1,6 +1,6 @@
 #lang racket
 
-(provide aoc-read aoc-write mapb bool->number)
+(provide aoc-read aoc-write mapb bool->number value-ref binstr->number)
 
 (define (aoc-read day [test #f])
   (let ([filename (format (if test "day-~a-test.in" "day-~a.in") day)])
@@ -22,3 +22,9 @@
   (apply aux '() xss))
 
 (define (bool->number b) (if b 1 0))
+
+(define-syntax-rule (value-ref v n)
+  (list-ref (call-with-values (λ () v) list) n))
+
+(define (binstr->number binstr)
+  (string->number (format "#b~a" binstr)))
