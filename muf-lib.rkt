@@ -1,6 +1,6 @@
 #lang racket
 
-(provide aoc-read aoc-write mapb)
+(provide aoc-read aoc-write mapb bool->number)
 
 (define (aoc-read day [test #f])
   (let ([filename (format (if test "day-~a-test.in" "day-~a.in") day)])
@@ -20,3 +20,5 @@
         (reverse acc)
         (apply aux (cons (apply f (map car xss)) acc) (map cdr xss))))
   (apply aux '() xss))
+
+(define (bool->number b) (if b 1 0))
