@@ -1,20 +1,19 @@
 #lang racket
 
 (require math/array)
+(require srfi/26)
 (require "muf-lib.rkt")
 
 (define day "04")
 
+(define (string->bingo bingo)
+  (list->array #(5 5) (map string->number (string-split bingo #:repeat? #t))))
+
 (define-values (input bingos)
   (let* ([in (file->string (format "day-~a.in" day))]
-         [in (string-split in "\n\n")]
-         [in (map (λ (s) (string-replace s "\n" " ")) in)])
-    (values (map string->number
-                 (string-split (car in) ","))
-            (map (λ (bingo)
-                   (list->array #(5 5) (map string->number (string-split bingo #:repeat? #t))))
-                 (cdr in)))))
-
+         [in (string-split in "\n\n")])
+    (values (map string->number (string-split (car in) ","))
+            (map string->bingo (cdr in)))))
 
 (define (has-winning-row? bingo)
   (array-ormap (λ (s) (< s 0)) (array-axis-max bingo 1)))
@@ -23,33 +22,28 @@
 
 (define (is-winning? bingo) (or (has-winning-row? bingo) (has-winning-col? bingo)))
 
-(define (winning bingos)
-  (car (filter is-winning? bingos)))
-
-; (define (mark k bingo)
-;   (array-map (λ (n) (if (= n k) (- n) n)) bingo))
-(define (mark k)
-  (λ (bingo) (array-map (λ (n) (if (= n k) (- -1 n) n)) bingo)))
-
 (define (score bingo)
   (array-all-sum (array-map (λ (n) (if (< n 0) 0 n)) bingo)))
 
+(define (mark k bingo)
+  (if (number? bingo) bingo
+      (let ([new-bingo (array-map (λ (n) (if (= n k) (- -1 n) n)) bingo)])
+        (if (is-winning? new-bingo)
+            (* k (score new-bingo))
+            new-bingo))))
+
 (define (nal1 input bingos)
   (for/fold ([bingos bingos]
-             [n 0]
-             #:result (* n (score (winning bingos))))
+             #:result (car (filter number? bingos)))
             ([k (in-list input)])
-    #:break (ormap is-winning? bingos)
-    (values (map (mark k) bingos) k)))
+    #:break (ormap number? bingos)
+    (map (cut mark k <>) bingos)))
 
 (define (nal2 input bingos)
-  (for/fold ([bingos bingos]
-             [bingus bingos]
-             [n 0]
-             #:result (* n (- (score (car bingus)) n)))
+  (for/fold ([bingos bingos] #:result (car bingos))
             ([k (in-list input)])
-    #:break (andmap is-winning? bingos)
-    (values (map (mark k) bingos) (filter-not is-winning? bingos) k)))
+    #:break (not (ormap array? bingos))
+    (map (cut mark k <>) (filter-not number? bingos))))
 
 (aoc-write day 1 (nal1 input bingos))
 (aoc-write day 2 (nal2 input bingos))
