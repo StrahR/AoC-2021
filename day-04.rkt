@@ -1,7 +1,6 @@
 #lang racket
 
 (require math/array)
-(require srfi/26)
 (require "muf-lib.rkt")
 
 (define day "04")

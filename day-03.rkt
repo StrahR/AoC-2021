@@ -7,8 +7,6 @@
 (define input (map binstr->number (aoc-read day)))
 (define len 12)
 
-(define (bitmask n k) (bitwise-and n (expt 2 k)))
-
 (define (dominant input k)
   (if (null? (cdr input)) (values -1 input input)
       (let-values ([(1s 0s) (partition (λ (n) (< 0 (bitmask n k))) input)])

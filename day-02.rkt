@@ -1,6 +1,7 @@
-#lang racket
+#lang at-exp racket
 
 (require "muf-lib.rkt")
+(require infix)
 
 (define day "02")
 
@@ -10,20 +11,18 @@
             (aoc-read day))))
 
 (define (nal1 input)
-  (for/fold ([pos 0] [depth 0] #:result (* pos depth))
-            ([command (in-list input)])
-    (match command
-      [(cons "forward" n) (values (+ pos n) depth)]
-      [(cons "down" n) (values pos (+ depth n))]
-      [(cons "up" n) (values pos (- depth n))])))
+  (for/fold/match (in-list input)
+    ([pos 0] [depth 0] #:result (* pos depth))
+    [(cons "forward" n) (values (+ pos n) depth      )]
+    [(cons "down" n)    (values pos       (+ depth n))]
+    [(cons "up" n)      (values pos       (- depth n))]))
 
 (define (nal2 input)
-  (for/fold ([aim 0] [pos 0] [depth 0] #:result (* pos depth))
-            ([command (in-list input)])
-    (match command
-      [(cons "forward" n) (values aim (+ pos n) (+ (* aim n) depth))]
-      [(cons "down" n) (values (+ aim n) pos depth)]
-      [(cons "up" n) (values (- aim n) pos depth)])))
+  (for/fold/match (in-list input)
+    ([pos 0] [depth 0] [aim 0] #:result (* pos depth))
+    [(cons "forward" n) (values (+ pos n) @${ aim*n + depth } aim      )]
+    [(cons "down" n)    (values pos       depth               (+ aim n))]
+    [(cons "up" n)      (values pos       depth               (- aim n))]))
 
 (aoc-write day 1 (nal1 input))
 (aoc-write day 2 (nal2 input))

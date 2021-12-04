@@ -1,6 +1,9 @@
 #lang racket
 
-(provide aoc-read aoc-write mapb bool->number value-ref binstr->number)
+(require srfi/26) ; Cut macro for partial function application
+(require infix)
+
+(require (for-syntax syntax/for-body))
 
 (define (aoc-read day [test #f])
   (let ([filename (format (if test "day-~a-test.in" "day-~a.in") day)])
@@ -28,3 +31,19 @@
 
 (define (binstr->number binstr)
   (string->number (format "#b~a" binstr)))
+
+(define (bitmask n k) (bitwise-and n (expt 2 k)))
+
+(define-syntax (for/fold/match stx)
+  (syntax-case stx ()
+    [(_ iterable acc body ... tail-expr)
+     (with-syntax ([original stx]
+                   [((pre-body ...) (post-body ...))
+                    (split-for-body stx #'(body ... tail-expr))])
+       #'(for/fold/derived original
+           acc
+           ([iterator iterable])
+           pre-body ...
+           (let () (match iterator post-body ...))))]))
+
+(provide (all-defined-out) cut)
