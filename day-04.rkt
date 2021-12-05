@@ -17,7 +17,8 @@
 (define (is-winning? bingo)
   (define (has-winning-row? bingo) (array-ormap (λ (s) (< s 0)) (array-axis-max bingo 1)))
   (define (has-winning-col? bingo) (array-ormap (λ (s) (< s 0)) (array-axis-max bingo 0)))
-  (or (has-winning-row? bingo) (has-winning-col? bingo)))
+  (or (has-winning-row? bingo)
+      (has-winning-col? bingo)))
 
 (define (score bingo)
   (array-all-sum (array-map (λ (n) (if (< n 0) 0 n)) bingo)))
@@ -30,8 +31,7 @@
             new-bingo))))
 
 (define (nal-loop input bingos break?)
-  (for/fold ([bingos bingos]
-             #:result (car (filter number? bingos)))
+  (for/fold ([bingos bingos] #:result (car (filter number? bingos)))
             ([k (in-list input)])
     #:break (break? bingos)
     (map (cut mark k <>) (filter-not number? bingos))))
