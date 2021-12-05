@@ -21,23 +21,30 @@
 (define (add-line vents a start end dir)
   (if (> start end) vents
       (match dir
-        ['x (add-line (hash-update vents (cons a start) add1 0) a (add1 start) end dir)]
-        ['y (add-line (hash-update vents (cons start a) add1 0) a (add1 start) end dir)])))
+        ['→ (add-line (hash-update vents (cons a start) add1 0) a (add1 start) end dir)]
+        ['↓ (add-line (hash-update vents (cons start a) add1 0) a (add1 start) end dir)]
+        ['↘ (add-line (hash-update vents (cons a start) add1 0) (add1 a) (add1 start) end dir)]
+        ['↗ (add-line (hash-update vents (cons start a) add1 0) (sub1 a) (add1 start) end dir)])))
 
 (define (nal1 input)
   (count (cut > <> 1)
          (hash-values
           (for/fold/match (in-list input)
             ([vents (hash)])
-            [(list x1 y1 x2 y2) #:when (= y1 y2) (add-line vents y1 (min x1 x2) (max x1 x2) 'x)]
-            [(list x1 y1 x2 y2) #:when (= x1 x2) (add-line vents x1 (min y1 y2) (max y1 y2) 'y)]
+            [(list x1 y1 x2 y2) #:when (= x1 x2) (add-line vents x1 (min y1 y2) (max y1 y2) '→)]
+            [(list x1 y1 x2 y2) #:when (= y1 y2) (add-line vents y1 (min x1 x2) (max x1 x2) '↓)]
             [_ vents]))))
 
-(define (nal2 input) input)
-
-; (define vents (nal1 input))
-; (for* ([x (in-range 10)] [y (in-range 10)])
-; (display (hash-ref vents (cons x y) ".")))
+(define (nal2 input)
+  (count (cut > <> 1)
+         (hash-values
+          (for/fold/match (in-list input)
+            ([vents (hash)])
+            [(list x1 y1 x2 y2) #:when (= x1 x2) (add-line vents x1 (min y1 y2) (max y1 y2) '→)]
+            [(list x1 y1 x2 y2) #:when (= y1 y2) (add-line vents y1 (min x1 x2) (max x1 x2) '↓)]
+            [(list x1 y1 x2 y2) #:when (eq? (< x1 x2) (< y1 y2))
+                                (add-line vents (min x1 x2) (min y1 y2) (max y1 y2) '↘)]
+            [(list x1 y1 x2 y2) (add-line vents (max y1 y2) (min x1 x2) (max x1 x2) '↗)]))))
 
 (aoc-write day 1 (nal1 input))
-; (aoc-write day 2 (nal2 input))
+(aoc-write day 2 (nal2 input))
