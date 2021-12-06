@@ -15,6 +15,21 @@
             ([i (in-range 80)])
     (lanternfish-day lanternfish)))
 
-(define (nal2 input) input)
+(define (get-lanternfish h d)
+  (flatten (for/list ([f (in-hash-pairs h)])
+             (match f [(cons key value) (make-list value (- key d -1))]))))
+
+(define (nal2 input)
+  (let ([input (for/fold ([acc (hash)])
+                         ([f (in-list input)])
+                 (hash-update acc f add1 0))])
+    (for/fold ([lanternfish input] #:result (apply + (hash-values lanternfish)))
+              ([i (in-range 256)])
+      (let* ([n (hash-ref lanternfish i 0)]
+             [lanternfish (hash-set lanternfish i 0)]
+             [lanternfish (hash-update lanternfish (+ i 7) (cut + <> n) 0)]
+             [lanternfish (hash-update lanternfish (+ i 9) (cut + <> n) 0)])
+        lanternfish))))
 
 (aoc-write day 1 (nal1 input))
+(aoc-write day 2 (nal2 input))
