@@ -46,4 +46,30 @@
            pre-body ...
            (let () (match iterator post-body ...))))]))
 
+(define-syntax (for/sum/match stx)
+  (syntax-case stx ()
+    [(_ iterable body ... tail-expr)
+     (with-syntax ([original stx]
+                   [((pre-body ...) (post-body ...))
+                    (split-for-body stx #'(body ... tail-expr))])
+       #'(for/fold/derived original
+           ([acc 0])
+           ([iterator iterable])
+           pre-body ...
+           (+ acc (let () (match iterator post-body ...)))))]))
+
+(define-syntax (for*/filter/list stx)
+  (syntax-case stx ()
+    [(_ iter body ... tail-expr)
+     (with-syntax ([original stx]
+                   [((pre-body ...) (post-body ...))
+                    (split-for-body stx #'(body ... tail-expr))])
+       #'(for*/fold/derived original
+           ([acc '()] #:result (reverse (filter-not void? acc)))
+           iter
+           pre-body ...
+           (cons (let () post-body ...) acc)))]))
+
+(define-syntax-rule (mλ body) (match-lambda body))
+
 (provide (all-defined-out) cut)
