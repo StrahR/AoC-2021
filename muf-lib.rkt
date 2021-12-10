@@ -72,4 +72,11 @@
 
 (define-syntax-rule (mλ body) (match-lambda body))
 
+(define (list-dedup xs)
+  (for/fold ([acc '()] #:result (reverse acc))
+            ([x (in-list xs)])
+    (cond [(empty? acc) (list x)]
+          [(equal? (car acc) x) acc]
+          [else (cons x acc)])))
+
 (provide (all-defined-out) cut)
